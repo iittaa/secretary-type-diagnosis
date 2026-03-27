@@ -168,6 +168,22 @@
             border-color: #D4A574;
         }
 
+        .btn-back {
+            background: transparent;
+            border: none;
+            color: #B8A090;
+            font-size: 14px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            margin-top: 16px;
+            padding: 8px 16px;
+            transition: color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            color: #7A6555;
+        }
+
         /* ========== 分析中画面 ========== */
         .analyzing-screen {
             text-align: center;
@@ -589,6 +605,7 @@
             <div class="question-number" id="question-number"></div>
             <div class="question-text" id="question-text"></div>
             <div class="choices" id="choices"></div>
+            <button class="btn-back" id="btn-back" onclick="goBack()" style="display: none;">← 前の質問に戻る</button>
         </div>
 
         <!-- 分析中画面 -->
@@ -861,6 +878,7 @@
         let currentQuestion = 0;
         let scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
         let diagnosisResult = '';
+        let answerHistory = []; // 回答履歴を保存
 
         // Google Apps Script のデプロイURL を設定してください
         const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
@@ -878,6 +896,7 @@
         function startQuiz() {
             currentQuestion = 0;
             scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
+            answerHistory = [];
             showQuestion();
         }
 
@@ -899,10 +918,16 @@
                 btn.onclick = () => selectChoice(index);
                 choicesEl.appendChild(btn);
             });
+
+            // 戻るボタンの表示制御（Q1では非表示）
+            document.getElementById('btn-back').style.display = currentQuestion > 0 ? 'block' : 'none';
         }
 
         function selectChoice(index) {
             const choice = questions[currentQuestion].choices[index];
+
+            // 回答履歴を保存
+            answerHistory.push({ questionIndex: currentQuestion, choiceIndex: index, scores: { ...choice.scores } });
 
             // スコア加算
             Object.keys(choice.scores).forEach(key => {
@@ -916,6 +941,21 @@
             } else {
                 showAnalyzing();
             }
+        }
+
+        function goBack() {
+            if (answerHistory.length === 0) return;
+
+            // 直前の回答を取り出す
+            const lastAnswer = answerHistory.pop();
+
+            // スコアを戻す
+            Object.keys(lastAnswer.scores).forEach(key => {
+                scores[key] -= lastAnswer.scores[key];
+            });
+
+            currentQuestion = lastAnswer.questionIndex;
+            showQuestion();
         }
 
         function showAnalyzing() {

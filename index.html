@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたの秘書タイプ診断</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #FDF8F3;
+            color: #5C4A3A;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== スタート画面 ========== */
+        .screen {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .start-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .start-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #6B5344;
+        }
+
+        .start-subtitle {
+            font-size: 14px;
+            color: #9C8878;
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.8;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #D4A574, #C4956A);
+            color: #fff;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+        }
+
+        /* ========== 質問画面 ========== */
+        .question-screen {
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #EDE3D9;
+            border-radius: 3px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4A574, #C4956A);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .question-number {
+            font-size: 13px;
+            color: #B8A090;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: #6B5344;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .choice-btn {
+            background: #FFFFFF;
+            border: 2px solid #EDE3D9;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            color: #6B5344;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .choice-btn:hover {
+            border-color: #D4A574;
+            background: #FFF9F4;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.15);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0);
+            background: #F5E6D8;
+            border-color: #D4A574;
+        }
+
+        /* ========== 分析中画面 ========== */
+        .analyzing-screen {
+            text-align: center;
+        }
+
+        .analyzing-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .analyzing-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6B5344;
+            margin-bottom: 12px;
+        }
+
+        .analyzing-sub {
+            font-size: 13px;
+            color: #B8A090;
+        }
+
+        .dot-animation span {
+            animation: dotBlink 1.4s infinite;
+            font-size: 24px;
+        }
+
+        .dot-animation span:nth-child(2) { animation-delay: 0.2s; }
+        .dot-animation span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotBlink {
+            0%, 80%, 100% { opacity: 0.2; }
+            40% { opacity: 1; }
+        }
+
+        /* ========== 結果画面 ========== */
+        .result-screen {
+            text-align: center;
+            width: 100%;
+        }
+
+        .result-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 30px rgba(108, 83, 68, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .result-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: #B8A090;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .result-type {
+            font-size: 26px;
+            font-weight: 700;
+            color: #6B5344;
+            margin-bottom: 4px;
+        }
+
+        .result-catchcopy {
+            font-size: 14px;
+            color: #C4956A;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .result-divider {
+            width: 40px;
+            height: 2px;
+            background: #EDE3D9;
+            margin: 0 auto 20px;
+        }
+
+        .result-description {
+            font-size: 14px;
+            line-height: 2;
+            color: #7A6555;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .result-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .skill-tag {
+            background: #F5E6D8;
+            color: #9C7A5A;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .result-skills-label {
+            font-size: 12px;
+            color: #B8A090;
+            margin-bottom: 10px;
+        }
+
+        .btn-retry {
+            background: transparent;
+            border: 2px solid #D4A574;
+            color: #D4A574;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retry:hover {
+            background: #D4A574;
+            color: #fff;
+        }
+
+        .btn-survey {
+            background: linear-gradient(135deg, #D4A574, #C4956A);
+            color: #fff;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+            margin-bottom: 12px;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .btn-survey:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+        }
+
+        /* ========== アンケート画面 ========== */
+        .survey-screen {
+            width: 100%;
+        }
+
+        .survey-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 30px rgba(108, 83, 68, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .survey-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #6B5344;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .survey-subtitle {
+            font-size: 13px;
+            color: #B8A090;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B5344;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #E07A5F;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #EDE3D9;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            color: #5C4A3A;
+            background: #FDF8F3;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #D4A574;
+        }
+
+        .form-input::placeholder {
+            color: #C4B5A5;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #FDF8F3;
+            border: 2px solid #EDE3D9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #D4A574;
+            background: #FFF9F4;
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #D4C4B4;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"]:checked {
+            border-color: #D4A574;
+        }
+
+        .radio-option input[type="radio"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 10px;
+            height: 10px;
+            background: #D4A574;
+            border-radius: 50%;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            color: #6B5344;
+            font-weight: 500;
+        }
+
+        .radio-label {
+            font-size: 14px;
+            color: #7A6555;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #D4A574, #C4956A);
+            color: #fff;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-skip {
+            background: transparent;
+            border: none;
+            color: #B8A090;
+            font-size: 13px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            margin-top: 12px;
+            text-decoration: underline;
+        }
+
+        /* ========== 送信完了画面 ========== */
+        .thanks-screen {
+            text-align: center;
+        }
+
+        .thanks-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .thanks-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #6B5344;
+            margin-bottom: 12px;
+        }
+
+        .thanks-message {
+            font-size: 14px;
+            color: #9C8878;
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .form-error {
+            color: #E07A5F;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* ========== AI バッジ ========== */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #E8D5C4, #DCC7B3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #7A6555;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .ai-badge::before {
+            content: "✦";
+            font-size: 10px;
+        }
+
+        /* ========== レスポンシブ ========== */
+        @media (max-width: 380px) {
+            .container {
+                padding: 32px 16px;
+            }
+            .start-title {
+                font-size: 22px;
+            }
+            .question-text {
+                font-size: 18px;
+            }
+            .result-type {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- スタート画面 -->
+        <div id="start-screen" class="screen active">
+            <div class="start-icon">💼</div>
+            <h1 class="start-title">あなたの秘書タイプ診断</h1>
+            <div class="ai-badge">AI診断</div>
+            <p class="start-subtitle">
+                7つの質問に答えるだけで<br>
+                あなたにぴったりの<br>
+                秘書タイプがわかります
+            </p>
+            <button class="btn-start" onclick="startQuiz()">診断スタート</button>
+        </div>
+
+        <!-- 質問画面 -->
+        <div id="question-screen" class="screen question-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="question-number" id="question-number"></div>
+            <div class="question-text" id="question-text"></div>
+            <div class="choices" id="choices"></div>
+        </div>
+
+        <!-- 分析中画面 -->
+        <div id="analyzing-screen" class="screen analyzing-screen">
+            <div class="analyzing-icon">✨</div>
+            <div class="analyzing-text">AIがあなたを分析中</div>
+            <div class="dot-animation">
+                <span>.</span><span>.</span><span>.</span>
+            </div>
+            <p class="analyzing-sub" style="margin-top: 16px;">あなたの回答からぴったりのタイプを診断しています</p>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="screen result-screen">
+            <div class="result-card">
+                <div class="result-icon" id="result-icon"></div>
+                <div class="result-label">YOUR TYPE</div>
+                <div class="result-type" id="result-type"></div>
+                <div class="result-catchcopy" id="result-catchcopy"></div>
+                <div class="result-divider"></div>
+                <div class="result-description" id="result-description"></div>
+                <div class="result-skills-label">あなたが活躍できる分野</div>
+                <div class="result-skills" id="result-skills"></div>
+            </div>
+            <button class="btn-survey" onclick="showSurvey()">アンケートに回答する</button>
+            <button class="btn-retry" onclick="retry()">もう一度診断する</button>
+        </div>
+
+        <!-- アンケート画面 -->
+        <div id="survey-screen" class="screen survey-screen">
+            <div class="survey-card">
+                <div class="survey-title">📝 アンケート</div>
+                <p class="survey-subtitle">
+                    ご回答ありがとうございます！<br>
+                    かんたんなアンケートにご協力ください
+                </p>
+
+                <form id="survey-form" onsubmit="return false;">
+                    <div class="form-group">
+                        <label class="form-label">お名前（ニックネーム可）<span class="required">*必須</span></label>
+                        <input type="text" class="form-input" id="survey-name" placeholder="例：はなこ" required>
+                        <div class="form-error" id="error-name">お名前を入力してください</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Instagram ID</label>
+                        <input type="text" class="form-input" id="survey-instagram" placeholder="例：@hanako_123">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">オンライン秘書に興味はありますか？<span class="required">*必須</span></label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="とても興味がある">
+                                <span class="radio-label">とても興味がある</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="少し興味がある">
+                                <span class="radio-label">少し興味がある</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="どちらともいえない">
+                                <span class="radio-label">どちらともいえない</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="あまり興味がない">
+                                <span class="radio-label">あまり興味がない</span>
+                            </label>
+                        </div>
+                        <div class="form-error" id="error-interest">選択してください</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ご意見・ご感想（自由記述）</label>
+                        <textarea class="form-input" id="survey-comment" placeholder="診断の感想や秘書スクールへのご質問など、お気軽にどうぞ！"></textarea>
+                    </div>
+
+                    <button type="button" class="btn-submit" id="btn-submit" onclick="submitSurvey()">送信する</button>
+                </form>
+                <button class="btn-skip" onclick="showThanks(true)">スキップする</button>
+            </div>
+        </div>
+
+        <!-- 送信完了画面 -->
+        <div id="thanks-screen" class="screen thanks-screen">
+            <div class="thanks-icon">🎉</div>
+            <div class="thanks-title">ありがとうございました！</div>
+            <p class="thanks-message" id="thanks-message">
+                アンケートへのご協力<br>ありがとうございます！<br><br>
+                オンライン秘書スクールの情報は<br>Instagramでお届けします✨
+            </p>
+            <button class="btn-retry" onclick="retry()">もう一度診断する</button>
+        </div>
+
+    </div>
+
+    <script>
+        // ========== 質問データ ==========
+        const questions = [
+            {
+                text: "友達から一番よく言われる\n褒め言葉は？",
+                choices: [
+                    { text: "🤝 「気が利くね」と言われる", scores: { hospitality: 3, director: 0, creative: 0, research: 1 } },
+                    { text: "💪 「頼りになるね」と言われる", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
+                    { text: "🎨 「センスいいね」と言われる", scores: { hospitality: 0, director: 0, creative: 3, research: 1 } },
+                    { text: "⚡ 「仕事が早いね」と言われる", scores: { hospitality: 1, director: 1, creative: 0, research: 3 } }
+                ]
+            },
+            {
+                text: "グループでの\nあなたの役割は？",
+                choices: [
+                    { text: "🌸 みんなをフォローする役", scores: { hospitality: 3, director: 0, creative: 0, research: 1 } },
+                    { text: "📋 全体をまとめるリーダー役", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
+                    { text: "💡 アイデアを出す人", scores: { hospitality: 0, director: 1, creative: 3, research: 0 } },
+                    { text: "🔍 調べる・分析する人", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
+                ]
+            },
+            {
+                text: "頼まれごとをされたら\nまず何をする？",
+                choices: [
+                    { text: "✅ すぐに取りかかる！", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
+                    { text: "📝 計画を立ててから進める", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
+                    { text: "🎯 自分なりにアレンジして取り組む", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
+                    { text: "🧠 一番効率的な方法を考える", scores: { hospitality: 0, director: 1, creative: 0, research: 3 } }
+                ]
+            },
+            {
+                text: "AIツール（ChatGPTなど）\nへの興味は？",
+                choices: [
+                    { text: "📱 毎日のように使っている！", scores: { hospitality: 0, director: 1, creative: 1, research: 3 } },
+                    { text: "✨ 興味あり！もっと使いこなしたい", scores: { hospitality: 0, director: 1, creative: 3, research: 1 } },
+                    { text: "🤔 ちょっと気になってはいる", scores: { hospitality: 2, director: 2, creative: 0, research: 0 } },
+                    { text: "📖 これから知っていきたい", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } }
+                ]
+            },
+            {
+                text: "仕事で一番\n楽しいと感じるのは？",
+                choices: [
+                    { text: "😊 人に喜ばれたとき", scores: { hospitality: 3, director: 0, creative: 1, research: 0 } },
+                    { text: "⚙️ 物事がスムーズに回ったとき", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
+                    { text: "🎉 何かを作り上げたとき", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
+                    { text: "📊 情報をきれいに整理できたとき", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
+                ]
+            },
+            {
+                text: "理想の「ありがとう」は\nどれ？",
+                choices: [
+                    { text: "💕 「あなたがいて助かった」", scores: { hospitality: 3, director: 0, creative: 0, research: 0 } },
+                    { text: "🏆 「おかげでうまくいった」", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
+                    { text: "🌟 「すごいの作ったね！」", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
+                    { text: "💎 「完璧だね」", scores: { hospitality: 0, director: 1, creative: 0, research: 3 } }
+                ]
+            },
+            {
+                text: "オンライン秘書として\n一番やってみたいのは？",
+                choices: [
+                    { text: "💌 メール対応・スケジュール管理", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
+                    { text: "🗂️ プロジェクト管理・チーム調整", scores: { hospitality: 0, director: 3, creative: 0, research: 0 } },
+                    { text: "📸 SNS運用・画像作成", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
+                    { text: "🔎 リサーチ・資料作成", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
+                ]
+            }
+        ];
+
+        // ========== 結果データ ==========
+        const results = {
+            hospitality: {
+                icon: "💗",
+                type: "ホスピタリティ秘書",
+                catchcopy: "心で寄り添う癒しの右腕",
+                description: "あなたは相手の気持ちを察する力に優れた、天性のサポータータイプ。細やかな気配りと温かいコミュニケーションで、クライアントから絶大な信頼を得られるでしょう。\n\n「あなたがいてくれて助かった」と言われることが、一番のやりがいになるはず。AI時代だからこそ、あなたの『人間力』が最大の武器になります。",
+                skills: ["クライアント対応", "メール・チャット返信", "スケジュール管理", "ホスピタリティ"]
+            },
+            director: {
+                icon: "👑",
+                type: "ディレクター秘書",
+                catchcopy: "全体を回す頼れる司令塔",
+                description: "あなたは全体を見渡して物事を効率よく進められる、生まれながらのリーダータイプ。複数のタスクを同時に管理し、チームを正しい方向に導く力があります。\n\nプロジェクト全体の流れを把握し、的確な判断ができるあなたは、経営者の右腕として欠かせない存在になれるでしょう。",
+                skills: ["プロジェクト管理", "タスク管理", "チーム調整", "業務改善"]
+            },
+            creative: {
+                icon: "🎨",
+                type: "クリエイティブ秘書",
+                catchcopy: "センスで魅せるSNSの達人",
+                description: "あなたは独自のセンスとアイデアで、クライアントのブランドを輝かせるクリエイタータイプ。SNS運用やデザインなど、ビジュアルで価値を生み出す力があります。\n\nAIツールを活用しながら、あなたならではのセンスを加えることで、他にはないオリジナルなコンテンツを作り出せるでしょう。",
+                skills: ["SNS運用", "画像・バナー作成", "ブログ執筆", "コンテンツ企画"]
+            },
+            research: {
+                icon: "🔮",
+                type: "リサーチ秘書",
+                catchcopy: "正確さで支える情報参謀",
+                description: "あなたは情報を集めて分析し、正確にまとめる力に優れた知的タイプ。データ入力やリサーチなど、正確さが求められる仕事で圧倒的な力を発揮します。\n\nAIツールとの相性も抜群で、効率的に情報を処理する能力は、AI時代にますます価値が高まるスキルです。",
+                skills: ["リサーチ・情報収集", "資料作成", "データ入力・管理", "AI活用"]
+            }
+        };
+
+        // ========== ゲーム状態 ==========
+        let currentQuestion = 0;
+        let scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
+        let diagnosisResult = '';
+
+        // Google Apps Script のデプロイURL を設定してください
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+
+        // ========== 関数 ==========
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            screen.classList.remove('active');
+            // アニメーションリセット
+            void screen.offsetWidth;
+            screen.classList.add('active');
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
+            showQuestion();
+        }
+
+        function showQuestion() {
+            showScreen('question-screen');
+            const q = questions[currentQuestion];
+
+            document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('question-number').textContent = `Q${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('question-text').textContent = q.text;
+
+            const choicesEl = document.getElementById('choices');
+            choicesEl.innerHTML = '';
+
+            q.choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => selectChoice(index);
+                choicesEl.appendChild(btn);
+            });
+        }
+
+        function selectChoice(index) {
+            const choice = questions[currentQuestion].choices[index];
+
+            // スコア加算
+            Object.keys(choice.scores).forEach(key => {
+                scores[key] += choice.scores[key];
+            });
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showAnalyzing();
+            }
+        }
+
+        function showAnalyzing() {
+            showScreen('analyzing-screen');
+            setTimeout(() => {
+                showResult();
+            }, 2500);
+        }
+
+        function showResult() {
+            showScreen('result-screen');
+
+            // 最高スコアのタイプを取得
+            const maxType = Object.keys(scores).reduce((a, b) => scores[a] >= scores[b] ? a : b);
+            const result = results[maxType];
+            diagnosisResult = result.type;
+
+            document.getElementById('result-icon').textContent = result.icon;
+            document.getElementById('result-type').textContent = result.type;
+            document.getElementById('result-catchcopy').textContent = result.catchcopy;
+            document.getElementById('result-description').textContent = result.description;
+
+            const skillsEl = document.getElementById('result-skills');
+            skillsEl.innerHTML = '';
+            result.skills.forEach(skill => {
+                const tag = document.createElement('span');
+                tag.className = 'skill-tag';
+                tag.textContent = skill;
+                skillsEl.appendChild(tag);
+            });
+        }
+
+        // ========== アンケート ==========
+        function showSurvey() {
+            showScreen('survey-screen');
+            // フォームリセット
+            document.getElementById('survey-form').reset();
+            document.querySelectorAll('.form-error').forEach(e => e.style.display = 'none');
+        }
+
+        function submitSurvey() {
+            // バリデーション
+            const name = document.getElementById('survey-name').value.trim();
+            const interest = document.querySelector('input[name="interest"]:checked');
+            let hasError = false;
+
+            if (!name) {
+                document.getElementById('error-name').style.display = 'block';
+                hasError = true;
+            } else {
+                document.getElementById('error-name').style.display = 'none';
+            }
+
+            if (!interest) {
+                document.getElementById('error-interest').style.display = 'block';
+                hasError = true;
+            } else {
+                document.getElementById('error-interest').style.display = 'none';
+            }
+
+            if (hasError) return;
+
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.textContent = '送信中...';
+
+            const data = {
+                timestamp: new Date().toLocaleString('ja-JP'),
+                name: name,
+                instagram: document.getElementById('survey-instagram').value.trim(),
+                interest: interest.value,
+                comment: document.getElementById('survey-comment').value.trim(),
+                diagnosisResult: diagnosisResult,
+                scores: JSON.stringify(scores)
+            };
+
+            // Google Apps Script に送信
+            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                // URL未設定の場合はコンソールに出力して完了画面へ
+                console.log('アンケート回答データ:', data);
+                showThanks(false);
+                return;
+            }
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                showThanks(false);
+            })
+            .catch(error => {
+                console.error('送信エラー:', error);
+                alert('送信に失敗しました。もう一度お試しください。');
+                btn.disabled = false;
+                btn.textContent = '送信する';
+            });
+        }
+
+        function showThanks(skipped) {
+            showScreen('thanks-screen');
+            if (skipped) {
+                document.getElementById('thanks-message').innerHTML =
+                    '診断おつかれさまでした！<br><br>オンライン秘書スクールの情報は<br>Instagramでお届けします✨';
+            } else {
+                document.getElementById('thanks-message').innerHTML =
+                    'アンケートへのご協力<br>ありがとうございます！<br><br>オンライン秘書スクールの情報は<br>Instagramでお届けします✨';
+            }
+        }
+
+        function retry() {
+            showScreen('start-screen');
+        }
+    </script>
+</body>
+</html>

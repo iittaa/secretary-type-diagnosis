@@ -20,7 +20,7 @@
 - フォント: Zen Maru Gothic（丸ゴシック）
 
 ## 診断の仕組み
-- 7問の選択式質問
+- 15問の選択式質問
 - 4つのスコア軸: hospitality, director, creative, research
 - 最高スコアのタイプを結果として表示
 - 「AIがあなたを分析中...」の演出あり

@@ -7,11 +7,15 @@
 - オンライン秘書スクールを新規で運営開始予定
 - Instagramから集客する戦略
 - 診断コンテンツでリーチを広げ、スクールへの興味を喚起する
+- 特典配布用として使用
 
 ## 技術構成
 - HTML + CSS + JavaScript（単一ファイル構成: `index.html`）
 - 外部依存: Google Fonts（Zen Maru Gothic）のみ
 - サーバー不要の静的サイト
+- ホスティング: Vercel
+- リポジトリ: https://github.com/iittaa/secretary-type-diagnosis
+- 本番URL: https://secretary-type-diagnosis.vercel.app
 
 ## デザイン方針
 - かわいい系デザイン
@@ -24,6 +28,11 @@
 - 4つのスコア軸: hospitality, director, creative, research
 - 最高スコアのタイプを結果として表示
 - 「AIがあなたを分析中...」の演出あり
+
+## アンケート機能
+- 診断結果の後にアンケートフォームを表示（スキップ可能）
+- 項目: 名前（必須）、Instagram ID、オンライン秘書への興味度（必須）、自由記述
+- Google Apps Script 連携でスプレッドシート保存も可能（任意）
 
 ## 診断結果（4タイプ）
 1. **ホスピタリティ秘書** — 心で寄り添う癒しの右腕

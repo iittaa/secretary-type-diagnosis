@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あなたの秘書タイプ診断</title>
+    <title>AIオンライン秘書 適性診断</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -107,7 +107,7 @@
             height: 6px;
             background: #EDE3D9;
             border-radius: 3px;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             overflow: hidden;
         }
 
@@ -116,6 +116,23 @@
             background: linear-gradient(90deg, #D4A574, #C4956A);
             border-radius: 3px;
             transition: width 0.4s ease;
+        }
+
+        .part-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: #C4956A;
+            background: #F5E6D8;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .part-label-wrapper {
+            text-align: center;
+            margin-bottom: 4px;
         }
 
         .question-number {
@@ -146,12 +163,13 @@
             border: 2px solid #EDE3D9;
             padding: 16px 20px;
             border-radius: 16px;
-            font-size: 15px;
+            font-size: 16px;
+            font-weight: 500;
             font-family: 'Zen Maru Gothic', sans-serif;
             color: #6B5344;
             cursor: pointer;
             transition: all 0.25s ease;
-            text-align: left;
+            text-align: center;
             line-height: 1.5;
         }
 
@@ -166,6 +184,16 @@
             transform: translateY(0);
             background: #F5E6D8;
             border-color: #D4A574;
+        }
+
+        .choice-btn.yes-btn:hover {
+            border-color: #D4A574;
+            background: #FFF3E8;
+        }
+
+        .choice-btn.no-btn:hover {
+            border-color: #C4B5A5;
+            background: #F5F0EB;
         }
 
         .btn-back {
@@ -280,27 +308,79 @@
             margin-bottom: 20px;
         }
 
-        .result-skills {
+        .result-score {
+            font-size: 13px;
+            color: #B8A090;
+            margin-bottom: 16px;
+        }
+
+        .result-score strong {
+            font-size: 28px;
+            color: #D4A574;
+            font-weight: 700;
+        }
+
+        .score-bar-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .score-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #EDE3D9;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4A574, #C4956A);
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+
+        .part-scores {
             display: flex;
-            flex-wrap: wrap;
+            justify-content: space-between;
             gap: 8px;
-            justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 20px;
         }
 
-        .skill-tag {
-            background: #F5E6D8;
-            color: #9C7A5A;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
+        .part-score-item {
+            flex: 1;
+            background: #FDF8F3;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
         }
 
-        .result-skills-label {
+        .part-score-label {
+            font-size: 11px;
+            color: #B8A090;
+            margin-bottom: 4px;
+        }
+
+        .part-score-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6B5344;
+        }
+
+        .result-action-label {
             font-size: 12px;
             color: #B8A090;
             margin-bottom: 10px;
+        }
+
+        .result-action {
+            background: #FDF8F3;
+            border-radius: 16px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #6B5344;
         }
 
         .btn-retry {
@@ -545,25 +625,6 @@
             display: none;
         }
 
-        /* ========== AI バッジ ========== */
-        .ai-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: linear-gradient(135deg, #E8D5C4, #DCC7B3);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            color: #7A6555;
-            font-weight: 500;
-            margin-bottom: 20px;
-        }
-
-        .ai-badge::before {
-            content: "✦";
-            font-size: 10px;
-        }
-
         /* ========== レスポンシブ ========== */
         @media (max-width: 380px) {
             .container {
@@ -578,6 +639,9 @@
             .result-type {
                 font-size: 22px;
             }
+            .part-scores {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -587,12 +651,12 @@
         <!-- スタート画面 -->
         <div id="start-screen" class="screen active">
             <div class="start-icon">💼</div>
-            <h1 class="start-title">あなたの秘書タイプ診断</h1>
+            <h1 class="start-title">AIオンライン秘書<br>適性診断</h1>
 
             <p class="start-subtitle">
-                15の質問に答えるだけで<br>
-                あなたにぴったりの<br>
-                秘書タイプがわかります
+                15のYES/NO質問に答えるだけで<br>
+                あなたのAIオンライン秘書<br>
+                適性タイプがわかります
             </p>
             <button class="btn-start" onclick="startQuiz()">診断スタート</button>
         </div>
@@ -602,10 +666,13 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
+            <div class="part-label-wrapper">
+                <span class="part-label" id="part-label"></span>
+            </div>
             <div class="question-number" id="question-number"></div>
             <div class="question-text" id="question-text"></div>
             <div class="choices" id="choices"></div>
-            <button class="btn-back" id="btn-back" onclick="goBack()" style="display: none;">← 前の質問に戻る</button>
+            <button class="btn-back" id="btn-back" onclick="goBack()" style="display: none;">&larr; 前の質問に戻る</button>
         </div>
 
         <!-- 分析中画面 -->
@@ -626,9 +693,16 @@
                 <div class="result-type" id="result-type"></div>
                 <div class="result-catchcopy" id="result-catchcopy"></div>
                 <div class="result-divider"></div>
+                <div class="result-score" id="result-score"></div>
+                <div class="score-bar-container">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill" id="score-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="part-scores" id="part-scores"></div>
                 <div class="result-description" id="result-description"></div>
-                <div class="result-skills-label">あなたが活躍できる分野</div>
-                <div class="result-skills" id="result-skills"></div>
+                <div class="result-action-label">今日やる1アクション</div>
+                <div class="result-action" id="result-action"></div>
             </div>
             <button class="btn-survey" onclick="showSurvey()">アンケートに回答する</button>
             <button class="btn-retry" onclick="retry()">もう一度診断する</button>
@@ -705,180 +779,68 @@
     <script>
         // ========== 質問データ ==========
         const questions = [
-            {
-                text: "友達から一番よく言われる\n褒め言葉は？",
-                choices: [
-                    { text: "🤝 「気が利くね」と言われる", scores: { hospitality: 3, director: 0, creative: 0, research: 1 } },
-                    { text: "💪 「頼りになるね」と言われる", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🎨 「センスいいね」と言われる", scores: { hospitality: 0, director: 0, creative: 3, research: 1 } },
-                    { text: "⚡ 「仕事が早いね」と言われる", scores: { hospitality: 1, director: 1, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "グループでの\nあなたの役割は？",
-                choices: [
-                    { text: "🌸 みんなをフォローする役", scores: { hospitality: 3, director: 0, creative: 0, research: 1 } },
-                    { text: "📋 全体をまとめるリーダー役", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "💡 アイデアを出す人", scores: { hospitality: 0, director: 1, creative: 3, research: 0 } },
-                    { text: "🔍 調べる・分析する人", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "頼まれごとをされたら\nまず何をする？",
-                choices: [
-                    { text: "✅ すぐに取りかかる！", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
-                    { text: "📝 計画を立ててから進める", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🎯 自分なりにアレンジして取り組む", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "🧠 一番効率的な方法を考える", scores: { hospitality: 0, director: 1, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "AIツール（ChatGPTなど）\nへの興味は？",
-                choices: [
-                    { text: "📱 毎日のように使っている！", scores: { hospitality: 0, director: 1, creative: 1, research: 3 } },
-                    { text: "✨ 興味あり！もっと使いこなしたい", scores: { hospitality: 0, director: 1, creative: 3, research: 1 } },
-                    { text: "🤔 ちょっと気になってはいる", scores: { hospitality: 2, director: 2, creative: 0, research: 0 } },
-                    { text: "📖 これから知っていきたい", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } }
-                ]
-            },
-            {
-                text: "仕事で一番\n楽しいと感じるのは？",
-                choices: [
-                    { text: "😊 人に喜ばれたとき", scores: { hospitality: 3, director: 0, creative: 1, research: 0 } },
-                    { text: "⚙️ 物事がスムーズに回ったとき", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🎉 何かを作り上げたとき", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "📊 情報をきれいに整理できたとき", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "理想の「ありがとう」は\nどれ？",
-                choices: [
-                    { text: "💕 「あなたがいて助かった」", scores: { hospitality: 3, director: 0, creative: 0, research: 0 } },
-                    { text: "🏆 「おかげでうまくいった」", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🌟 「すごいの作ったね！」", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "💎 「完璧だね」", scores: { hospitality: 0, director: 1, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "オンライン秘書として\n一番やってみたいのは？",
-                choices: [
-                    { text: "💌 メール対応・スケジュール管理", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
-                    { text: "🗂️ プロジェクト管理・チーム調整", scores: { hospitality: 0, director: 3, creative: 0, research: 0 } },
-                    { text: "📸 SNS運用・画像作成", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "🔎 リサーチ・資料作成", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "休日の過ごし方で\n一番多いのは？",
-                choices: [
-                    { text: "☕ 友達とカフェでおしゃべり", scores: { hospitality: 3, director: 0, creative: 1, research: 0 } },
-                    { text: "📅 来週の予定を整理する", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "📷 おしゃれなスポットを巡る", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "📚 本を読んだり動画で学ぶ", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "LINEの返信スタイルは？",
-                choices: [
-                    { text: "💬 すぐに丁寧に返す", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
-                    { text: "📌 要点だけ簡潔に返す", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🎀 スタンプや絵文字を駆使する", scores: { hospitality: 1, director: 0, creative: 3, research: 0 } },
-                    { text: "🤔 じっくり考えてから返す", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "旅行の計画を立てるとき\nあなたは？",
-                choices: [
-                    { text: "🙌 みんなの希望を聞いてまとめる", scores: { hospitality: 3, director: 1, creative: 0, research: 0 } },
-                    { text: "🗺️ スケジュールをきっちり組む", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "✨ 映えスポットを中心に考える", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "🔍 口コミや比較サイトを徹底調査", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "苦手だなと感じるのは\nどれ？",
-                choices: [
-                    { text: "😣 誰かに厳しく指摘すること", scores: { hospitality: 3, director: 0, creative: 0, research: 1 } },
-                    { text: "😤 自由すぎて計画がないこと", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "😩 マニュアル通りの単調な作業", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "😰 曖昧な指示で動くこと", scores: { hospitality: 1, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "SNSで思わず\n保存するのは？",
-                choices: [
-                    { text: "🫶 心温まるエピソード", scores: { hospitality: 3, director: 0, creative: 1, research: 0 } },
-                    { text: "📈 仕事術・時短テクニック", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "🎨 おしゃれなデザインや写真", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "🧩 知識系・解説コンテンツ", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "チームで問題が起きたとき\nあなたは？",
-                choices: [
-                    { text: "🤗 まずメンバーの気持ちをケアする", scores: { hospitality: 3, director: 0, creative: 0, research: 0 } },
-                    { text: "🎯 原因を特定して解決策を指示する", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "💡 新しい切り口で打開策を提案する", scores: { hospitality: 0, director: 1, creative: 3, research: 0 } },
-                    { text: "📋 過去の事例やデータを調べる", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "自分のスマホに\n一番多いアプリは？",
-                choices: [
-                    { text: "💌 メッセージ・コミュニケーション系", scores: { hospitality: 3, director: 0, creative: 0, research: 0 } },
-                    { text: "✅ タスク管理・カレンダー系", scores: { hospitality: 0, director: 3, creative: 0, research: 1 } },
-                    { text: "📸 写真加工・デザイン系", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "📖 ニュース・学習系", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            },
-            {
-                text: "プレゼントを選ぶとき\n大事にするのは？",
-                choices: [
-                    { text: "💝 相手の好みに合わせる", scores: { hospitality: 3, director: 0, creative: 1, research: 0 } },
-                    { text: "⏰ 予算と納期をしっかり管理", scores: { hospitality: 0, director: 3, creative: 0, research: 0 } },
-                    { text: "🎁 ラッピングや見た目にこだわる", scores: { hospitality: 0, director: 0, creative: 3, research: 0 } },
-                    { text: "⭐ レビューや評価を徹底的に比較", scores: { hospitality: 0, director: 0, creative: 0, research: 3 } }
-                ]
-            }
+            // Part1: 基礎マインド診断（Q1〜Q5）
+            { part: 1, partName: "基礎マインド診断", text: "分からないことは\n「まず検索」する方だ" },
+            { part: 1, partName: "基礎マインド診断", text: "丁寧な言葉遣いは\n嫌いじゃない" },
+            { part: 1, partName: "基礎マインド診断", text: "誰かの「助かった」が\n自分の喜びになる" },
+            { part: 1, partName: "基礎マインド診断", text: "コツコツ作業、\n意外と嫌いじゃない" },
+            { part: 1, partName: "基礎マインド診断", text: "新しいツール、\n触ってみたい派" },
+            // Part2: AI適応力診断（Q6〜Q10）
+            { part: 2, partName: "AI適応力診断", text: "スマホのアプリ、\n自分でインストールできる" },
+            { part: 2, partName: "AI適応力診断", text: "LINEやInstagram、\n使いこなしてる" },
+            { part: 2, partName: "AI適応力診断", text: "「AIに聞いてみよう」\nって発想、ちょっとある" },
+            { part: 2, partName: "AI適応力診断", text: "間違えても、\nやり直せばいいと思える" },
+            { part: 2, partName: "AI適応力診断", text: "「楽できるなら楽したい」\nと思う" },
+            // Part3: 在宅ワーク耐性診断（Q11〜Q15）
+            { part: 3, partName: "在宅ワーク耐性診断", text: "一人作業、\n苦じゃない" },
+            { part: 3, partName: "在宅ワーク耐性診断", text: "締切は前倒し派 or\nちゃんと守る派" },
+            { part: 3, partName: "在宅ワーク耐性診断", text: "家でオンオフの\n切り替えができる" },
+            { part: 3, partName: "在宅ワーク耐性診断", text: "報告・連絡・相談、\n面倒くさがらない" },
+            { part: 3, partName: "在宅ワーク耐性診断", text: "「顔出しなし」で\n働きたい気持ちが強い" }
         ];
 
         // ========== 結果データ ==========
-        const results = {
-            hospitality: {
-                icon: "💗",
-                type: "ホスピタリティ秘書",
-                catchcopy: "心で寄り添う癒しの右腕",
-                description: "あなたは相手の気持ちを察する力に優れた、天性のサポータータイプ。細やかな気配りと温かいコミュニケーションで、クライアントから絶大な信頼を得られるでしょう。\n\n「あなたがいてくれて助かった」と言われることが、一番のやりがいになるはず。AI時代だからこそ、あなたの『人間力』が最大の武器になります。",
-                skills: ["クライアント対応", "メール・チャット返信", "スケジュール管理", "ホスピタリティ"]
+        const results = [
+            {
+                min: 12, max: 15,
+                icon: "🔥",
+                type: "即スタート型",
+                catchcopy: "もう始めていいレベル",
+                description: "迷ってる時間がもったいないタイプ。\n\nあなたは基礎マインド・AI適応力・在宅ワーク耐性のすべてにおいて高い適性を持っています。\n\nオンライン秘書として活躍するための素質は十分。あとは最初の一歩を踏み出すだけです。",
+                action: "クラウドワークスで「オンライン秘書」と検索してみて。どんな案件があるか、リアルが見えてくる🔥"
             },
-            director: {
-                icon: "👑",
-                type: "ディレクター秘書",
-                catchcopy: "全体を回す頼れる司令塔",
-                description: "あなたは全体を見渡して物事を効率よく進められる、生まれながらのリーダータイプ。複数のタスクを同時に管理し、チームを正しい方向に導く力があります。\n\nプロジェクト全体の流れを把握し、的確な判断ができるあなたは、経営者の右腕として欠かせない存在になれるでしょう。",
-                skills: ["プロジェクト管理", "タスク管理", "チーム調整", "業務改善"]
+            {
+                min: 8, max: 11,
+                icon: "✨",
+                type: "伸びしろ型",
+                catchcopy: "素質は十分、やり方を知るだけで化ける",
+                description: "あなたには十分な素質があります。\n\n「やり方」を知るだけで一気に伸びるタイプ。学ぶ環境を1つ決めれば、驚くほど早く成長できるでしょう。\n\nAI時代のオンライン秘書は、あなたのような柔軟な人が最も活躍できます。",
+                action: "Geminiに「私に向いてる在宅ワーク教えて」と入力してみて。AIに相談する感覚を今日つかんで✨"
             },
-            creative: {
-                icon: "🎨",
-                type: "クリエイティブ秘書",
-                catchcopy: "センスで魅せるSNSの達人",
-                description: "あなたは独自のセンスとアイデアで、クライアントのブランドを輝かせるクリエイタータイプ。SNS運用やデザインなど、ビジュアルで価値を生み出す力があります。\n\nAIツールを活用しながら、あなたならではのセンスを加えることで、他にはないオリジナルなコンテンツを作り出せるでしょう。",
-                skills: ["SNS運用", "画像・バナー作成", "ブログ執筆", "コンテンツ企画"]
+            {
+                min: 4, max: 7,
+                icon: "🕊️",
+                type: "じっくり型",
+                catchcopy: "焦らなくていい、得意を伸ばそう",
+                description: "焦る必要はまったくありません。\n\n苦手を潰すより、YESだった項目を伸ばす方がずっと早い。得意な1点から広げていけば、自然とスキルは身についていきます。\n\nあなたのペースで、確実に前に進んでいきましょう。",
+                action: "今日の家事の予定、AIに相談してみて。ChatGPTでもGeminiでもOK。使うだけで世界が広がる💎"
             },
-            research: {
-                icon: "🔮",
-                type: "リサーチ秘書",
-                catchcopy: "正確さで支える情報参謀",
-                description: "あなたは情報を集めて分析し、正確にまとめる力に優れた知的タイプ。データ入力やリサーチなど、正確さが求められる仕事で圧倒的な力を発揮します。\n\nAIツールとの相性も抜群で、効率的に情報を処理する能力は、AI時代にますます価値が高まるスキルです。",
-                skills: ["リサーチ・情報収集", "資料作成", "データ入力・管理", "AI活用"]
+            {
+                min: 0, max: 3,
+                icon: "🌿",
+                type: "準備期間型",
+                catchcopy: "今は情報収集フェーズ、大丈夫",
+                description: "今はまだ情報収集のフェーズ。それでまったく問題ありません。\n\nNOの項目は「今の状態」であって、あなたの限界ではありません。無料のAIツールを1つ触るところから始めるだけで、世界が変わります。\n\n適性は「今」じゃなくて「伸びる角度」で見るもの。あなたの可能性はこれからです。",
+                action: "ChatGPTのアカウント作成だけする。それが今日の100点🕊️"
             }
-        };
+        ];
 
         // ========== ゲーム状態 ==========
         let currentQuestion = 0;
-        let scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
+        let yesCount = 0;
+        let partScores = { 1: 0, 2: 0, 3: 0 };
+        let answerHistory = [];
         let diagnosisResult = '';
-        let answerHistory = []; // 回答履歴を保存
 
         // Google Apps Script のデプロイURL を設定してください
         const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
@@ -888,14 +850,14 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const screen = document.getElementById(screenId);
             screen.classList.remove('active');
-            // アニメーションリセット
             void screen.offsetWidth;
             screen.classList.add('active');
         }
 
         function startQuiz() {
             currentQuestion = 0;
-            scores = { hospitality: 0, director: 0, creative: 0, research: 0 };
+            yesCount = 0;
+            partScores = { 1: 0, 2: 0, 3: 0 };
             answerHistory = [];
             showQuestion();
         }
@@ -905,34 +867,37 @@
             const q = questions[currentQuestion];
 
             document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('part-label').textContent = `Part${q.part}：${q.partName}`;
             document.getElementById('question-number').textContent = `Q${currentQuestion + 1} / ${questions.length}`;
             document.getElementById('question-text').textContent = q.text;
 
             const choicesEl = document.getElementById('choices');
             choicesEl.innerHTML = '';
 
-            q.choices.forEach((choice, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.textContent = choice.text;
-                btn.onclick = () => selectChoice(index);
-                choicesEl.appendChild(btn);
-            });
+            const yesBtn = document.createElement('button');
+            yesBtn.className = 'choice-btn yes-btn';
+            yesBtn.textContent = '⭕ YES';
+            yesBtn.onclick = () => selectChoice(true);
+            choicesEl.appendChild(yesBtn);
 
-            // 戻るボタンの表示制御（Q1では非表示）
+            const noBtn = document.createElement('button');
+            noBtn.className = 'choice-btn no-btn';
+            noBtn.textContent = '✖️ NO';
+            noBtn.onclick = () => selectChoice(false);
+            choicesEl.appendChild(noBtn);
+
             document.getElementById('btn-back').style.display = currentQuestion > 0 ? 'block' : 'none';
         }
 
-        function selectChoice(index) {
-            const choice = questions[currentQuestion].choices[index];
+        function selectChoice(isYes) {
+            const q = questions[currentQuestion];
 
-            // 回答履歴を保存
-            answerHistory.push({ questionIndex: currentQuestion, choiceIndex: index, scores: { ...choice.scores } });
+            answerHistory.push({ questionIndex: currentQuestion, isYes: isYes, part: q.part });
 
-            // スコア加算
-            Object.keys(choice.scores).forEach(key => {
-                scores[key] += choice.scores[key];
-            });
+            if (isYes) {
+                yesCount++;
+                partScores[q.part]++;
+            }
 
             currentQuestion++;
 
@@ -946,13 +911,12 @@
         function goBack() {
             if (answerHistory.length === 0) return;
 
-            // 直前の回答を取り出す
             const lastAnswer = answerHistory.pop();
 
-            // スコアを戻す
-            Object.keys(lastAnswer.scores).forEach(key => {
-                scores[key] -= lastAnswer.scores[key];
-            });
+            if (lastAnswer.isYes) {
+                yesCount--;
+                partScores[lastAnswer.part]--;
+            }
 
             currentQuestion = lastAnswer.questionIndex;
             showQuestion();
@@ -968,36 +932,37 @@
         function showResult() {
             showScreen('result-screen');
 
-            // 最高スコアのタイプを取得
-            const maxType = Object.keys(scores).reduce((a, b) => scores[a] >= scores[b] ? a : b);
-            const result = results[maxType];
+            const result = results.find(r => yesCount >= r.min && yesCount <= r.max);
             diagnosisResult = result.type;
 
             document.getElementById('result-icon').textContent = result.icon;
             document.getElementById('result-type').textContent = result.type;
             document.getElementById('result-catchcopy').textContent = result.catchcopy;
-            document.getElementById('result-description').textContent = result.description;
+            document.getElementById('result-score').innerHTML = `YESの数 <strong>${yesCount}</strong> / 15`;
+            document.getElementById('score-bar-fill').style.width = (yesCount / 15 * 100) + '%';
 
-            const skillsEl = document.getElementById('result-skills');
-            skillsEl.innerHTML = '';
-            result.skills.forEach(skill => {
-                const tag = document.createElement('span');
-                tag.className = 'skill-tag';
-                tag.textContent = skill;
-                skillsEl.appendChild(tag);
-            });
+            const partScoresEl = document.getElementById('part-scores');
+            partScoresEl.innerHTML = '';
+            const partNames = ['基礎マインド', 'AI適応力', '在宅ワーク耐性'];
+            for (let i = 1; i <= 3; i++) {
+                const item = document.createElement('div');
+                item.className = 'part-score-item';
+                item.innerHTML = `<div class="part-score-label">${partNames[i - 1]}</div><div class="part-score-value">${partScores[i]} / 5</div>`;
+                partScoresEl.appendChild(item);
+            }
+
+            document.getElementById('result-description').textContent = result.description;
+            document.getElementById('result-action').textContent = result.action;
         }
 
         // ========== アンケート ==========
         function showSurvey() {
             showScreen('survey-screen');
-            // フォームリセット
             document.getElementById('survey-form').reset();
             document.querySelectorAll('.form-error').forEach(e => e.style.display = 'none');
         }
 
         function submitSurvey() {
-            // バリデーション
             const name = document.getElementById('survey-name').value.trim();
             const interest = document.querySelector('input[name="interest"]:checked');
             let hasError = false;
@@ -1029,12 +994,11 @@
                 interest: interest.value,
                 comment: document.getElementById('survey-comment').value.trim(),
                 diagnosisResult: diagnosisResult,
-                scores: JSON.stringify(scores)
+                yesCount: yesCount,
+                partScores: JSON.stringify(partScores)
             };
 
-            // Google Apps Script に送信
             if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-                // URL未設定の場合はコンソールに出力して完了画面へ
                 console.log('アンケート回答データ:', data);
                 showThanks(false);
                 return;
